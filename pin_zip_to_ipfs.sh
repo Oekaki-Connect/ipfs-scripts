@@ -1,9 +1,33 @@
 #!/bin/bash
 
-# requires jq
-# sudo apt-get install jq
-
 set -e
+
+# Function to check if a command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Check for required commands
+required_commands=("jq" "unzip" "ipfs")
+missing_commands=()
+
+for cmd in "${required_commands[@]}"; do
+    if ! command_exists "$cmd"; then
+        missing_commands+=("$cmd")
+    fi
+done
+
+if [ ${#missing_commands[@]} -ne 0 ]; then
+    echo "Error: The following required commands are missing:"
+    for cmd in "${missing_commands[@]}"; do
+        echo "  - $cmd"
+    done
+    echo "Please install these commands and try again."
+    echo "You can usually install them using your package manager:"
+    echo "  For Ubuntu/Debian: sudo apt-get install ${missing_commands[*]}"
+    echo "  For macOS with Homebrew: brew install ${missing_commands[*]}"
+    exit 1
+fi
 
 # Function to check if IPFS daemon is running
 check_ipfs_daemon() {
