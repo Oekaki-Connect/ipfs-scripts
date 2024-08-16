@@ -76,7 +76,7 @@ cd "$COLLECTION_NAME"
 
 # Pin images folder
 echo "Pinning images folder..."
-IMAGES_CID=$(ipfs add -Qr images)
+IMAGES_CID=$(ipfs add -Qr --cid-version=1 images)
 echo "Images CID: $IMAGES_CID"
 
 # Process JSON files
@@ -119,7 +119,7 @@ done
 
 # Pin JSON folder
 echo "Pinning JSON folder..."
-JSON_CID=$(ipfs add -Qr json)
+JSON_CID=$(ipfs add -Qr --cid-version=1 json)
 echo "JSON CID: $JSON_CID"
 
 # Create CIDs file
