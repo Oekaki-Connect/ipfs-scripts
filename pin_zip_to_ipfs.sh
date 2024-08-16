@@ -135,4 +135,16 @@ echo "CIDs saved to ${COLLECTION_NAME}_cids.txt"
 # Print CIDs
 cat "${COLLECTION_NAME}_cids.txt"
 
+# Verify that CIDs are pinned
+echo "Verifying that CIDs are pinned..."
+PINNED_CIDS=$(ipfs pin ls --type=recursive | awk '{print $1}')
+
+for CID in $IMAGES_CID $JSON_CID; do
+    if echo "$PINNED_CIDS" | grep -q "$CID"; then
+        echo "✅ CID $CID is pinned successfully."
+    else
+        echo "❌ Warning: CID $CID is not pinned!"
+    fi
+done
+
 echo "Processing completed successfully!"
