@@ -1,1 +1,6 @@
 # this should be complete list of OC collection CIDs
+
+# Oekaki Maker JSON
+bafybeigdjz4a6oij72vbk7wbeevkgjpllkwr3de7xv3gcrqgua5git4h3q
+# Oekaki Maker Images
+bafybeic5yxtsyokpmlkzqyxx7rtyvm7apmkm52byjh6fqu5wm45kpvelem
