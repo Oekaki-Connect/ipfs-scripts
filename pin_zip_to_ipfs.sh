@@ -84,6 +84,7 @@ echo "Processing JSON files..."
 for json_file in json/*; do
     number=$(basename "$json_file")
     if ! validate_json "$json_file"; then
+        echo "Error: Invalid JSON in $json_file"
         continue
     fi
     
@@ -96,23 +97,22 @@ for json_file in json/*; do
     image_ext="${image_file##*.}"
     
     # Update JSON file
-    jq --arg cid "$IMAGES_CID" --arg num "$number" --arg ext "$image_ext" '
-    if has("image") then
-        .image = "ipfs://\($cid)/\($num).\($ext)"
-    else
-        . | ._temp_image_field = "ipfs://\($cid)/\($num).\($ext)" |
-        to_entries |
-        map(if .key == "attributes" then
-                {"key": "_temp_image_field", "value": ._temp_image_field} + .
-            else
-                .
-            end
-        ) |
-        from_entries |
-        del(._temp_image_field) |
-        with_entries(if .key == "_temp_image_field" then .key = "image" else . end)
-    end
-    ' "$json_file" > "${json_file}.tmp" && mv "${json_file}.tmp" "$json_file"
+    if ! jq --arg cid "$IMAGES_CID" --arg num "$number" --arg ext "$image_ext" '
+    {
+        name: .name,
+        description: .description,
+        image: "ipfs://\($cid)/\($num).\($ext)",
+        attributes: .attributes
+    } + with_entries(select(.key as $k | ["name", "description", "image", "attributes"] | index($k) | not))
+    ' "$json_file" > "${json_file}.tmp"; then
+        echo "Error: jq command failed for $json_file"
+        continue
+    fi
+    
+    if ! mv "${json_file}.tmp" "$json_file"; then
+        echo "Error: Failed to overwrite $json_file with new content"
+        continue
+    fi
     
     echo "Updated $json_file"
 done

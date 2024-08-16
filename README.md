@@ -23,3 +23,10 @@ You can use these scripts for your own projects as well.
 `chmod +x pin_zip_to_ipfs.sh`
 
 `./pin_zip_to_ipfs.sh testnfts.zip`
+
+
+---
+
+list pinned recursive CIDs
+
+`ipfs pin ls -t recursive -q`
