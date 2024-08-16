@@ -9,7 +9,7 @@ check_ipfs_daemon() {
     then
         echo "IPFS daemon is not running. Starting it now..."
         ipfs daemon &
-        sleep 10  # Increased wait time for daemon to start
+        sleep 10  # Wait for daemon to start
         if ! pgrep -x "ipfs" > /dev/null
         then
             echo "Failed to start IPFS daemon. Please start it manually and try again."
@@ -25,12 +25,15 @@ pin_cid() {
     local cid=$1
     if ipfs pin ls | grep -q "$cid"; then
         echo "CID $cid is already pinned."
+        return 1
     else
         echo "Pinning CID $cid..."
         if ipfs pin add "$cid"; then
             echo "Successfully pinned CID $cid."
+            return 0
         else
             echo "Failed to pin CID $cid. Please check if it's valid."
+            return 2
         fi
     fi
 }
@@ -54,27 +57,20 @@ already_pinned_cids=0
 failed_cids=0
 
 # Read CIDs from file and pin them
-while IFS= read -r line
-do
-    # Trim leading and trailing whitespace
-    line=$(echo "$line" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+while IFS= read -r line || [[ -n "$line" ]]; do
+    # Remove carriage return and trim whitespace
+    line=$(echo "$line" | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
     
     # Skip empty lines and comments
     if [[ -n "$line" && ! "$line" =~ ^\s*# ]]; then
         ((total_cids++))
         echo "Processing CID: $line"
-        if ipfs pin ls | grep -q "$line"; then
-            echo "CID $line is already pinned."
-            ((already_pinned_cids++))
-        else
-            if ipfs pin add "$line"; then
-                echo "Successfully pinned CID $line."
-                ((pinned_cids++))
-            else
-                echo "Failed to pin CID $line. Please check if it's valid."
-                ((failed_cids++))
-            fi
-        fi
+        pin_cid "$line"
+        case $? in
+            0) ((pinned_cids++));;
+            1) ((already_pinned_cids++));;
+            2) ((failed_cids++));;
+        esac
     fi
 done < "$CID_FILE"
 
