@@ -62,7 +62,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     line=$(echo "$line" | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
     
     # Skip empty lines and comments
-    if [[ -n "$line" && ! "$line" =~ ^\s*# ]]; then
+    if [[ -n "$line" && ! "$line" =~ ^# ]]; then
         ((total_cids++))
         echo "Processing CID: $line"
         pin_cid "$line"
