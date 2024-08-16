@@ -72,8 +72,23 @@ for json_file in json/*; do
     image_ext="${image_file##*.}"
     
     # Update JSON file
-    jq --arg cid "$IMAGES_CID" --arg num "$number" --arg ext "$image_ext" \
-       '.image = "ipfs://\($cid)/\($num).\($ext)"' "$json_file" > "${json_file}.tmp" && mv "${json_file}.tmp" "$json_file"
+    jq --arg cid "$IMAGES_CID" --arg num "$number" --arg ext "$image_ext" '
+    if has("image") then
+        .image = "ipfs://\($cid)/\($num).\($ext)"
+    else
+        . | ._temp_image_field = "ipfs://\($cid)/\($num).\($ext)" |
+        to_entries |
+        map(if .key == "attributes" then
+                {"key": "_temp_image_field", "value": ._temp_image_field} + .
+            else
+                .
+            end
+        ) |
+        from_entries |
+        del(._temp_image_field) |
+        with_entries(if .key == "_temp_image_field" then .key = "image" else . end)
+    end
+    ' "$json_file" > "${json_file}.tmp" && mv "${json_file}.tmp" "$json_file"
     
     echo "Updated $json_file"
 done
