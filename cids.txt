@@ -105,20 +105,11 @@ bafybeidjczvxlfdalexbyyzwmyojibxv5bbceqoq4mtp2rd75bzllwy5hu
 # Beetle Shinobi Images
 bafybeiculmylga5c5xq3fmxzlzabnmzftdmchd3hhoow6i5kvzmogfpgva
 
-
 # Kemonokaki JSON
 bafybeidzu77mfoxlxo65cusy5j47cwgg6fdzq4mw7g4kqerkzcrwapkc5m
 # Kemonokaki Images
 bafybeidxclt74frtmiuiisfquphn2qdukz2cg63cr7bwyblp3mfwr5gk6a
 
-
-
-
-
-
-
-
-WARNING METADATA NOT PROPERLY FUNCTIONING PLEASE REVISE
 # Pixelady Figmata JSON
 bafybeigibcocisl3d4oirx5bivemr6iwtdnbswxbpd57zb4ekf64lch5dm
 # Pixelady Figmata Images
